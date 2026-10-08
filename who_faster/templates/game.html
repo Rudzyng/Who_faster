@@ -74,8 +74,8 @@
     <script>
         const GAME_CONFIG = {
             maxRounds: {{ max_rounds }},
-            apiRoundUrl: "{{ url_for('api_round') }}",
-            resultsUrl: "{{ url_for('results') }}",
+            apiRoundUrl: "{{ url_for('main.api_round') }}",
+            resultsUrl: "{{ url_for('main.results') }}",
             player1Name: "{{ player1_name | escape }}",
             player2Name: "{{ player2_name | escape }}"
         };

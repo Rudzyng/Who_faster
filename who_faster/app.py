@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import random
 
+from api_rudzyng import get_game_session, post_points
 
 db = SQLAlchemy()
 
@@ -21,6 +22,8 @@ bp = Blueprint("main", __name__)
 
 @bp.route("/", methods=["GET", "POST"])
 def index():
+    # игровая сессия портала: iframe передаёт ?session=<id>&token=<hmac>
+    get_game_session()
     if request.method == "POST":
         p1 = request.form.get("player1_name", "").strip() or "Игрок 1"
         p2 = request.form.get("player2_name", "").strip() or "Игрок 2"
@@ -132,6 +135,18 @@ def results():
         session["final_score_p1"] = data.get("score_p1", 0)
         session["final_score_p2"] = data.get("score_p2", 0)
         session["rounds_played"] = data.get("rounds_played", 0)
+
+        # баллы портала начисляются один раз за матч — счёт победителя
+        winner_score = max(
+            int(session["final_score_p1"] or 0),
+            int(session["final_score_p2"] or 0),
+        )
+        if winner_score > 0:
+            try:
+                post_points(winner_score)
+            except Exception as e:
+                print(f"Не удалось начислить баллы: {e}")
+
         return jsonify({"ok": True, "redirect_url": url_for("main.results")})
 
     p1 = session.get("player1_name", "Игрок 1")
@@ -161,7 +176,7 @@ def create_app():
     basedir = os.path.abspath(os.path.dirname(__file__))
 
     app = Flask(__name__)
-    app.config["SECRET_KEY"] = "change-me-in-production"
+    app.config["SECRET_KEY"] = os.environ.get("APP_SECRET_KEY", "change-me-in-production")
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "game.db")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -175,4 +190,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

@@ -57,11 +57,11 @@
 
     <script>
         function playAgain() {
-            window.location.href = "{{ url_for('game') }}";
+            window.location.href = "{{ url_for('main.game') }}";
         }
         
         function goToMenu() {
-            window.location.href = "{{ url_for('index') }}";
+            window.location.href = "{{ url_for('main.index') }}";
         }
 </script>
 </body>
