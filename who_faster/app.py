@@ -21,6 +21,7 @@ bp = Blueprint("main", __name__)
 
 
 @bp.route("/", methods=["GET", "POST"])
+@bp.route("/start", methods=["GET", "POST"])
 def index():
     # игровая сессия портала: iframe передаёт ?session=<id>&token=<hmac>
     get_game_session()
@@ -174,10 +175,13 @@ def results():
 
 def create_app():
     basedir = os.path.abspath(os.path.dirname(__file__))
+    database_path = os.environ.get(
+        "GAME_DATABASE_PATH", os.path.join(basedir, "game.db")
+    )
 
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.environ.get("APP_SECRET_KEY", "change-me-in-production")
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "game.db")
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
