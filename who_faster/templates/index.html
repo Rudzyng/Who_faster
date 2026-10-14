@@ -47,7 +47,7 @@
                 <div class="register-title-main">РЕГИСТРАЦИ</div>
                 <div class="register-title-sub">РЕГИСТРАЦИЯ</div>
             </div>
-            <form method="post" action="/game" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <form method="post" action="{{ url_for('main.game') }}" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
                 <div class="form-group">
                     <label class="form-label">НЫФФЫССУТ УÆ НОМ</label>
                     <input type="text" name="player1_name" class="form-input" placeholder="ХÆРÆГ" required>

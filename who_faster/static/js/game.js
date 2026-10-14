@@ -406,7 +406,7 @@
 
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
-            window.location.href = "/";
+            window.location.href = GAME_CONFIG.indexUrl;
             return;
         }
     

@@ -1,5 +1,6 @@
 from flask import Flask, Blueprint, render_template, request, redirect, url_for, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.middleware.proxy_fix import ProxyFix
 import os
 import random
 
@@ -181,11 +182,20 @@ def create_app():
 
     app = Flask(__name__)
     app.config["SECRET_KEY"] = os.environ.get("APP_SECRET_KEY", "change-me-in-production")
+    path_base = os.environ.get("GAME_PATH_BASE", "").rstrip("/")
+    app.config["APPLICATION_ROOT"] = path_base or "/"
+    app.config["SESSION_COOKIE_PATH"] = path_base or "/"
+    app.config["SESSION_COOKIE_NAME"] = os.environ.get(
+        "GAME_COOKIE_NAME", "lingvogameos_who_faster_session"
+    )
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + database_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
     app.register_blueprint(bp)
+    app.wsgi_app = ProxyFix(
+        app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+    )
 
     return app
 
