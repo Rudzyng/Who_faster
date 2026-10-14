@@ -15,7 +15,10 @@
         
         <!-- Шапка с иконками -->
         <div class="header">
-            <div class="profile-icon" onclick="alert('Профиль')"></div>
+            <div class="profile-summary" title="Профиль LingvoGameOs">
+                <div class="profile-icon"></div>
+                <span>{{ session.get('portal_user_name') or 'Гость' }}</span>
+            </div>
             <div class="menu-icon" onclick="alert('Меню')">
                 <span></span>
                 <span></span>

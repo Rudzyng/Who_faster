@@ -4,7 +4,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 import os
 import random
 
-from api_rudzyng import get_game_session, post_points
+from api_rudzyng import ApiError, get_game_session, post_points
 
 db = SQLAlchemy()
 
@@ -25,7 +25,10 @@ bp = Blueprint("main", __name__)
 @bp.route("/start", methods=["GET", "POST"])
 def index():
     # игровая сессия портала: iframe передаёт ?session=<id>&token=<hmac>
-    get_game_session()
+    try:
+        get_game_session()
+    except ApiError as exc:
+        return f"Игровая сессия отклонена: {exc}", 401
     if request.method == "POST":
         p1 = request.form.get("player1_name", "").strip() or "Игрок 1"
         p2 = request.form.get("player2_name", "").strip() or "Игрок 2"
